@@ -1,0 +1,15 @@
+remote_theme: ddc-java/ddc-day
+
+title: Codebreaker
+description: A code-breaking solitaire puzzle game.
+
+author:
+  name: Zac Ramsey
+  copyright: false
+  email: zramsey1@cnm.edu
+
+page_naviagtor:
+  enabled: true
+
+titles_from_headings:
+  enabled: false
