@@ -3,19 +3,35 @@ plugins {
     id 'androidx.navigation.safeargs'
 }
 
+//Functions accessing local.properties object
+String getLocalProperty(String name) {
+    Properties properties = new Properties()
+    properties.load(new FileInputStream("$projectDir/local.properties"))
+    return properties.getProperty(name)
+}
+
+static String quoted(String input) {
+    return "\"$input\""
+}
+
 android {
     compileSdkVersion 30
 //    buildToolsVersion "31.0.0"
 
+
     defaultConfig {
+
         //this application ID is a unique identifier, must be unique!!
         applicationId "edu.cnm.deepdive.codebreaker"
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+
         //this line has to do with unit testing
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "BASE_URL", quoted(getLocalProperty('base_url'))
     }
 
     buildTypes {
@@ -64,7 +80,7 @@ dependencies {
     //GSon library
     implementation 'com.google.code.gson:gson:2.8.8'
 
-    //Retrofit library
+    //Retrofit library (doing the actual communication)
     def retrofitVersion = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
@@ -73,7 +89,7 @@ dependencies {
     //OKHttp library
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
 
-    //ReactiveX libraries
+    //ReactiveX libraries (core of using reactive streams)
     implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
