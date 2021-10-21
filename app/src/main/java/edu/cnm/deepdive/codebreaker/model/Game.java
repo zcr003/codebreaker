@@ -1,6 +1,8 @@
 package edu.cnm.deepdive.codebreaker.model;
 
 import com.google.gson.annotations.Expose;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Game {
 
@@ -15,7 +17,9 @@ public class Game {
 
   private boolean solved;
 
-  //Getters and Setters to give access to these outside of the class
+  private final List<Guess> guesses = new LinkedList<>();
+
+  //Getters to give access to these outside of the class
   public String getId() {
     return id;
   }
@@ -46,5 +50,9 @@ public class Game {
 
   public void setSolved(boolean solved) {
     this.solved = solved;
+  }
+
+  public List<Guess> getGuesses() {
+    return guesses;
   }
 }

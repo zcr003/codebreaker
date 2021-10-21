@@ -18,22 +18,33 @@ public class MainViewModel extends AndroidViewModel {
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
 
-  //The constructor to initialize.
+  //The constructor to initialize. Always has the same name as the class. No return type.
   public MainViewModel(@NonNull Application application) {
     super(application);
     repository = new GameRepository();
     game = new MutableLiveData<>();
     throwable = new MutableLiveData<>();
     pending = new CompositeDisposable();
+    startgame("ABCDEF", 3);
+  }
+
+  //Getters for throwable and game.
+  public MutableLiveData<Game> getGame() {
+    return game;
+  }
+
+  public MutableLiveData<Throwable> getThrowable() {
+    return throwable;
   }
 
   //The Method. When we invoke startGame we get a single object.
   public void startgame(String pool, int length) {
+    throwable.postValue(null);
     pending.add(
         repository
             .startGame(pool, length)
             .subscribe(
-      /* A consumer is a functional interface that takes a
+                /* A consumer is a functional interface that takes a
          parameter and doesn't return anything */
                 game::postValue,
                 this::postThrowable
@@ -43,6 +54,20 @@ public class MainViewModel extends AndroidViewModel {
 
   }
 
+
+  public void submitGuess(String text) {
+     throwable.postValue(null);
+     pending.add(
+         repository
+             .submitGuess(game.getValue(), text)
+             .subscribe(
+                 game :: postValue,
+                 this :: postThrowable
+             )
+     );
+
+
+  }
   //Another Method.
   private void postThrowable(Throwable throwable) {
     Log.e(getClass().getSimpleName(), throwable.getMessage(), throwable);
