@@ -1,4 +1,4 @@
-package edu.cnm.deepdive.codebreaker.controller.ui.home;
+package edu.cnm.deepdive.codebreaker.controller;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
