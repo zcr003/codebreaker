@@ -7,8 +7,8 @@
   android:layout_height="match_parent"
   tools:context=".controller.PlayFragment">
 
-<!--  This is our recyclerview and is a child of constraint layout. We can "constrain" it to different areas of the app. -->
-<!--  0dp is 0 pixels so stretches to width of screen-->
+  <!--  This is our recyclerview and is a child of constraint layout. We can "constrain" it to different areas of the app. -->
+  <!--  0dp is 0 pixels so stretches to width of screen-->
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/guesses"
     android:layout_width="0dp"
@@ -16,30 +16,37 @@
     android:orientation="vertical"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintBottom_toTopOf="@id/guess_container"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     tools:listitem="@layout/item_guess"/>
 
-<!--  This will be the field that allows editable text so a user can type-->
-  <EditText
-    android:id="@+id/guess"
+  <LinearLayout
+    android:id="@+id/guess_container"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:inputType="text"
-    android:hint="@string/guess_hint"
-    android:layout_margin="@dimen/half_dynamic_spacing"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toStartOf="@id/submit"
-    tools:ignore="Autofill"/>
+    app:layout_constraintEnd_toEndOf="parent">
 
-  <Button
-    android:id="@+id/submit"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/half_dynamic_spacing"
-    android:text="@string/submit"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBaseline_toBaselineOf="@id/guess"/>
+    <!--  This will be the field that allows editable text so a user can type-->
+    <EditText
+      android:id="@+id/guess"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:inputType="text"
+      android:hint="@string/guess_hint"
+      android:layout_margin="@dimen/half_dynamic_spacing"
+      android:layout_weight="1"
+      tools:ignore="Autofill"/>
+
+    <Button
+      android:id="@+id/submit"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/half_dynamic_spacing"
+      android:text="@string/submit"/>
+
+  </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import edu.cnm.deepdive.codebreaker.adapter.GuessItemAdapter;
 import edu.cnm.deepdive.codebreaker.databinding.FragmentPlayBinding;
 import edu.cnm.deepdive.codebreaker.viewmodel.MainViewModel;
 
@@ -22,7 +24,7 @@ public class PlayFragment extends Fragment {
     binding = FragmentPlayBinding.inflate(inflater, container, false);
     binding.submit.setOnClickListener((v) ->
         viewModel.submitGuess(binding.guess.getText().toString().trim())
-        );
+    );
     return binding.getRoot();
   }
 
@@ -32,11 +34,17 @@ public class PlayFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
     viewModel.getThrowable().observe(getViewLifecycleOwner(), (throwable) -> {
-          if (throwable != null) {
-            Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_LONG).show();
-          }
-        }
-    );
+      if (throwable != null) {
+        Toast.makeText(getContext(), throwable.getMessage(), Toast.LENGTH_LONG).show();
+      }
+    });
+
+    viewModel.getGame().observe(getViewLifecycleOwner(), (game) -> {
+      GuessItemAdapter adapter = new GuessItemAdapter(getContext(), game.getGuesses());
+      binding.guesses.setAdapter(adapter);
+      //Making the submit button disappear once game is solved. If solved, use view gone otherwise view visible.
+      binding.guessContainer.setVisibility(game.isSolved() ? View.GONE : View.VISIBLE);
+    });
   }
 
   @Override
