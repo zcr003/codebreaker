@@ -18,7 +18,8 @@
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent" />
+    app:layout_constraintEnd_toEndOf="parent"
+    tools:listitem="@layout/item_guess"/>
 
 <!--  This will be the field that allows editable text so a user can type-->
   <EditText
