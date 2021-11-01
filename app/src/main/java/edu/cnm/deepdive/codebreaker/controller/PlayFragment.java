@@ -17,9 +17,8 @@ import androidx.lifecycle.ViewModelProvider;
 import edu.cnm.deepdive.codebreaker.R;
 import edu.cnm.deepdive.codebreaker.adapter.GuessItemAdapter;
 import edu.cnm.deepdive.codebreaker.databinding.FragmentPlayBinding;
-import edu.cnm.deepdive.codebreaker.model.Game;
+import edu.cnm.deepdive.codebreaker.model.entity.Game;
 import edu.cnm.deepdive.codebreaker.viewmodel.MainViewModel;
-import java.util.Locale;
 
 public class PlayFragment extends Fragment implements InputFilter {
 

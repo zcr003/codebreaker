@@ -1,4 +1,4 @@
-package edu.cnm.deepdive.codebreaker.model;
+package edu.cnm.deepdive.codebreaker.model.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -9,6 +9,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.util.Date;
 
 
 @Entity(
@@ -34,13 +35,16 @@ public class Guess {
   @ColumnInfo(name = "game_id", index = true)
   private long gameId;
 
-
-
   @NonNull
   @Expose
   @SerializedName("id")
   @ColumnInfo(name = "service_key")
   private String serviceKey;
+
+  @NonNull
+  @Expose
+  @ColumnInfo(index = true)
+  private Date created;
 
   @Expose
   private String text;
@@ -81,6 +85,15 @@ public class Guess {
 
   public void setServiceKey(@NonNull String serviceKey) {
     this.serviceKey = serviceKey;
+  }
+
+  @NonNull
+  public Date getCreated() {
+    return created;
+  }
+
+  public void setCreated(@NonNull Date created) {
+    this.created = created;
   }
 
   public String getText() {
