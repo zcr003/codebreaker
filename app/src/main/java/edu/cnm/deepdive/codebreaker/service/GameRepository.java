@@ -40,6 +40,12 @@ public class GameRepository {
           game.setSolved(guess.isSolution());
           return game;
         })
+//        .flatMap((g) -> {
+//          if (game.isSolved()) {
+//            //TODO use DAO to write game and Guesses to database
+//          }
+//          return g;
+//        })
         .subscribeOn(Schedulers.io());
   }
 
