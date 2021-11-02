@@ -32,6 +32,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "BASE_URL", quoted(getLocalProperty('base_url'))
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        'room.schemaLocation' : "$projectDir/schemas".toString()
+                ]
+
+            }
+        }
     }
 
     buildTypes {
