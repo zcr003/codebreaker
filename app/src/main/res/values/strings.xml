@@ -9,10 +9,10 @@
   <string name="action_settings">Settings</string>
 
   <string name="menu_play">Play</string>
-  <string name="menu_gallery">Gallery</string>
+  <string name="menu_scores">Top Scores</string>
   <string name="menu_slideshow">Slideshow</string>
   <string name="submit">Submit</string>
-  <string name="guess_hint">Text of guess</string>
+  <string name="guess_hint">Text of Guess</string>
   <string name="new_game">New Game</string>
 
   <string name="play_error_message">Unable to process request. (%s)</string>
