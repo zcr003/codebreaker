@@ -6,6 +6,7 @@ import edu.cnm.deepdive.codebreaker.model.dao.GameDao;
 import edu.cnm.deepdive.codebreaker.model.dao.GuessDao;
 import edu.cnm.deepdive.codebreaker.model.entity.Game;
 import edu.cnm.deepdive.codebreaker.model.entity.Guess;
+import edu.cnm.deepdive.codebreaker.model.pojo.GameWithGuesses;
 import edu.cnm.deepdive.codebreaker.model.view.GameSummary;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -28,50 +29,44 @@ public class GameRepository {
 
   //typical choreography for a reactive stream
   //capable of producing a Game object but not yet a method itself.
-  public Single<Game> startGame(String pool, int length) {
-    return Single
-        .fromCallable(() -> {
-          Game game = new Game();
-          game.setPool(pool);
-          game.setLength(length);
-          return game;
-        })
-        .flatMap(proxy::startGame)
-        .map((game) -> {
-          int poolSize = (int) game
+  public Single<Game> save(Game game) {
+    return proxy
+        .startGame(game)
+        .map((startedGame) -> {
+          int poolSize = (int) startedGame
               .getPool()
               .codePoints()
               .count();
-          game.setPoolSize(poolSize);
-          return game;
+          startedGame.setPoolSize(poolSize);
+          return startedGame;
         })
         .subscribeOn(Schedulers.io());
   }
 
-  public Single<Game> submitGuess(Game game, String text) {
+  public Single<Game> save(Game game, Guess guess) {
     //All this is only if the game is solved
-    return Single
-        .fromCallable(() -> {
-          Guess guess = new Guess();
-          guess.setText(text);
-          return guess;
-        })
-        .flatMap((guess) -> proxy.submitGuess(guess, game.getServiceKey()))
-        .map((guess) -> {
-          game.getGuesses().add(guess);
-          game.setSolved(guess.isSolution());
+    return proxy
+        .submitGuess(guess, game.getServiceKey())
+        .map((processedGuess) -> {
+          game.getGuesses().add(processedGuess);
+          game.setSolved(processedGuess.isSolution());
           return game;
         })
         .flatMap(this::insertGameWithGuesses)
         .subscribeOn(Schedulers.io());
   }
 
-  public LiveData<List<GameSummary>> selectSummariesByGuessCount(int poolSize, int length) {
+  //This method will give us a single game and all of its guesses at the same time .
+  public LiveData<GameWithGuesses> get(long gameId) {
+    return gameDao.select(gameId);
+  }
+
+  public LiveData<List<GameSummary>> getOrderedByGuessCount(int poolSize, int length) {
     return gameDao.selectSummariesByGuessCount(poolSize, length);
 
   }
 
-  public LiveData<List<GameSummary>> selectSummariesByTotalTime(int poolSize, int length) {
+  public LiveData<List<GameSummary>> getOrderedByTotalTime(int poolSize, int length) {
     return gameDao.selectSummariesByTotalTime(poolSize, length);
 
   }
@@ -79,23 +74,23 @@ public class GameRepository {
 
   @NonNull
   private Single<Game> insertGameWithGuesses(Game game) {
-     return (game.isSolved())
-         //If game is solved we return everything after the ?
-      ? gameDao
-          .insert(game)
-          .map((id) -> {
-            game.setId(id);
-            for (Guess guess : game.getGuesses()) {
-              guess.setGameId(id);
-            }
-            return game;
-          })
-          .flatMap((g2) -> guessDao
-              .insert(g2.getGuesses())
-          // TODO invoke Guess.setId for all of the guesses.
-              .map((ids) -> g2))
-         //If not solved we return everything after this :
-    : Single.just(game);
+    return (game.isSolved())
+        //If game is solved we return everything after the ?
+        ? gameDao
+        .insert(game)
+        .map((id) -> {
+          game.setId(id);
+          for (Guess guess : game.getGuesses()) {
+            guess.setGameId(id);
+          }
+          return game;
+        })
+        .flatMap((g2) -> guessDao
+            .insert(g2.getGuesses())
+            // TODO invoke Guess.setId for all of the guesses.
+            .map((ids) -> g2))
+        //If not solved we return everything after this :
+        : Single.just(game);
   }
 
 }

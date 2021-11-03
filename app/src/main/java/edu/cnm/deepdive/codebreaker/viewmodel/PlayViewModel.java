@@ -6,14 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Lifecycle.Event;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.OnLifecycleEvent;
 import edu.cnm.deepdive.codebreaker.model.entity.Game;
-import edu.cnm.deepdive.codebreaker.model.view.GameSummary;
+import edu.cnm.deepdive.codebreaker.model.entity.Guess;
 import edu.cnm.deepdive.codebreaker.service.GameRepository;
 import io.reactivex.disposables.CompositeDisposable;
-import java.util.List;
 
 public class PlayViewModel extends AndroidViewModel implements LifecycleObserver {
 
@@ -47,13 +45,16 @@ public class PlayViewModel extends AndroidViewModel implements LifecycleObserver
   //The Method. When we invoke startGame we get a single object.
   public void startGame() {
     throwable.postValue(null);
+    Game game = new Game();
+    game.setPool("ABCDEF"); // TODO Read value from shared preferences.
+    game.setLength(3); // TODO Read value from shared preferences.
     pending.add(
         repository
-            .startGame("ABCDEF", 3)
+            .save(game)
             .subscribe(
                 /* A consumer is a functional interface that takes a
          parameter and doesn't return anything */
-                game::postValue,
+                this.game::postValue,
                 this::postThrowable
 
             )
@@ -64,9 +65,12 @@ public class PlayViewModel extends AndroidViewModel implements LifecycleObserver
 
   public void submitGuess(String text) {
     throwable.postValue(null);
+    Guess guess = new Guess();
+    guess.setText(text);
+    //noinspection ConstantConditions
     pending.add(
         repository
-            .submitGuess(game.getValue(), text)
+            .save(game.getValue(), guess)
             .subscribe(
                 game::postValue,
                 this::postThrowable

@@ -12,7 +12,7 @@
   <string name="menu_scores">Top Scores</string>
   <string name="menu_slideshow">Slideshow</string>
   <string name="submit">Submit</string>
-  <string name="guess_hint">Text of Guess</string>
+  <string name="guess_hint">Text of G uess</string>
   <string name="new_game">New Game</string>
 
   <string name="play_error_message">Unable to process request. (%s)</string>
