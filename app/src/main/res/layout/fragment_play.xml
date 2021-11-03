@@ -35,7 +35,7 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:inputType="text"
-      android:hint="@string/guess_hint"
+      android:hint="@string/text_of_guess"
       android:layout_margin="@dimen/half_dynamic_spacing"
       android:layout_weight="1"
       tools:ignore="Autofill"/>

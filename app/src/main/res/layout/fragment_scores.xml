@@ -15,8 +15,9 @@
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"/>
+    tools:listitem="@layout/item_game_summary"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
