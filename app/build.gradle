@@ -10,6 +10,12 @@ String getLocalProperty(String name) {
     return properties.getProperty(name)
 }
 
+String getProperty(String filename, String name) {
+    Properties properties = new Properties()
+    properties.load(new FileInputStream(filename))
+    return properties.getProperty(name)
+}
+
 static String quoted(String input) {
     return "\"$input\""
 }
@@ -33,10 +39,14 @@ android {
 
         buildConfigField "String", "BASE_URL", quoted(getLocalProperty('base_url'))
 
+        buildConfigField "String", "CLIENT_ID",
+                quoted(
+                        getProperty("$projectDir/../../../services/codebreaker.properties", 'client_id'))
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
-                        'room.schemaLocation' : "$projectDir/schemas".toString()
+                        'room.schemaLocation': "$projectDir/schemas".toString()
                 ]
 
             }
