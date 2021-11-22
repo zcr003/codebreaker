@@ -10,7 +10,7 @@ String getLocalProperty(String name) {
     return properties.getProperty(name)
 }
 
-String getProperty(String filename, String name) {
+static String getProperty(String filename, String name) {
     Properties properties = new Properties()
     properties.load(new FileInputStream(filename))
     return properties.getProperty(name)
@@ -39,9 +39,10 @@ android {
 
         buildConfigField "String", "BASE_URL", quoted(getLocalProperty('base_url'))
 
-        buildConfigField "String", "CLIENT_ID",
-                quoted(
-                        getProperty("$projectDir/../../../services/codebreaker.properties", 'client_id'))
+
+        //TODO Uncomment following line after branching for example capstone client.
+//        buildConfigField "String", "CLIENT_ID", quoted(
+//                getProperty("$projectDir/../../../services/codebreaker.properties", 'client_id'))
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -70,8 +71,8 @@ android {
 
 dependencies {
 //These are the basic Android support libraries ---are required.
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
 
@@ -82,7 +83,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
 
     // Navigation libraries
-    implementation 'androidx.fragment:fragment:1.3.6'
+    implementation 'androidx.fragment:fragment:1.4.0'
     implementation "androidx.navigation:navigation-fragment:$navigationVersion"
     implementation "androidx.navigation:navigation-ui:$navigationVersion"
 
