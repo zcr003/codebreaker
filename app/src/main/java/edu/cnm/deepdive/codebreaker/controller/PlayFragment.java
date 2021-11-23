@@ -29,9 +29,7 @@ public class PlayFragment extends Fragment {
   private PlayViewModel viewModel;
   private FragmentPlayBinding binding;
   private int codeLength;
-  private String pool;
   private Spinner[] spinners;
-  private Game game;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,25 +40,20 @@ public class PlayFragment extends Fragment {
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentPlayBinding.inflate(inflater, container, false);
-    binding.submit.setOnClickListener((v) -> {
-      StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < codeLength; i++) {
-        String emoji = (String) spinners[i].getSelectedItem();
-        builder.append(emoji);
-      }
-      viewModel.submitGuess(builder.toString());
-    });
+    binding.submit.setOnClickListener((v) -> submitGuess());
     spinners = setupSpinners(
         binding.guessContainer, getResources().getInteger(
             R.integer.code_length_pref_max));
     return binding.getRoot();
   }
 
+
   //This is where we access our viewModels.
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    viewModel = new ViewModelProvider(this).get(PlayViewModel.class);
+    //noinspection ConstantConditions
+    viewModel = new ViewModelProvider(getActivity()).get(PlayViewModel.class);
     getLifecycle().addObserver(viewModel);
     viewModel.getThrowable().observe(getViewLifecycleOwner(), this::displayError);
     viewModel.getGame().observe(getViewLifecycleOwner(), this::update);
@@ -91,16 +84,54 @@ public class PlayFragment extends Fragment {
     binding = null;
   }
 
+  private void submitGuess() {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < codeLength; i++) {
+      String emoji = (String) spinners[i].getSelectedItem();
+      builder.append(emoji);
+    }
+    viewModel.submitGuess(builder.toString());
+  }
+
+
   private void update(Game game) {
-    this.game = game;
     codeLength = game.getLength();
-    pool = game.getPool();
+    String pool = game.getPool();
     List<Guess> guesses = game.getGuesses();
     Guess lastGuess = guesses.isEmpty() ? null : guesses.get(guesses.size() - 1);
     String[] emojis = getUnicodeArray(pool);
+    updateSpinners(lastGuess, emojis);
+    updateControls(game);
+    updateGuesses(guesses);
+  }
+
+
+
+  // This updates our list of guesses after each guess and appears up above.
+  private void updateGuesses(List<Guess> guesses) {
+    GuessItemAdapter adapter = new GuessItemAdapter(getContext(), guesses);
+    binding.guesses.setAdapter(adapter);
+    binding.guesses.scrollToPosition(adapter.getItemCount() - 1);
+  }
+
+
+  /*Making the submit button disappear once game is solved.
+    If solved, use view gone = otherwise view = visible*/
+  private void updateControls(Game game) {
+    if (game.isSolved()) {
+      binding.guessContainer.setVisibility(View.GONE);
+      binding.submit.setVisibility(View.GONE);
+    } else {
+      binding.guessContainer.setVisibility(View.VISIBLE);
+      binding.submit.setVisibility(View.VISIBLE);
+    }
+  }
+
+  private void updateSpinners(Guess lastGuess, String[] emojis) {
     for (int i = codeLength; i < spinners.length; i++) {
       spinners[i].setVisibility(View.GONE);
     }
+    // These are for our spinners
     for (int spinnerIndex = 0; spinnerIndex < codeLength; spinnerIndex++) {
       spinners[spinnerIndex].setVisibility(View.VISIBLE);
       ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -118,18 +149,6 @@ public class PlayFragment extends Fragment {
         }
       }
     }
-      /*Making the submit button disappear once game is solved.
-      If solved, use view gone = otherwise view = visible*/
-    if (game.isSolved()) {
-      binding.guessContainer.setVisibility(View.GONE);
-      binding.submit.setVisibility(View.GONE);
-    } else {
-      binding.guessContainer.setVisibility(View.VISIBLE);
-      binding.submit.setVisibility(View.VISIBLE);
-    }
-    GuessItemAdapter adapter = new GuessItemAdapter(getContext(), guesses);
-    binding.guesses.setAdapter(adapter);
-    binding.guesses.scrollToPosition(adapter.getItemCount() - 1);
   }
 
   private void displayError(Throwable throwable) {
